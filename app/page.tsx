@@ -161,9 +161,9 @@ function HomeContent() {
             {/* Next Prayer Banner */}
             {nextPrayer && (
               <div className="bg-gradient-to-r from-amber-200 to-orange-200 dark:from-amber-900/50 dark:to-orange-900/50 rounded-xl p-2 xs:p-3 sm:p-4 text-center animate-pulse-subtle">
-                <p className="text-xs text-forced-dark font-semibold">Next Prayer</p>
-                <p className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-forced-black">{nextPrayer.name}</p>
-                <p className="text-xs xs:text-sm text-forced-dark font-medium">in {nextPrayer.remaining}</p>
+                <p className="text-large text-forced-light font-bold text-amber-300 dark:text-brown-100">Next Prayer</p>
+                <p className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-forced-light text-green-800 dark:text-green-700">{nextPrayer.name}</p>
+                <p className="text-large xs:text-sm text-forced-light font-bold text-amber-300 dark:text-brown-100">in {nextPrayer.remaining}</p>
               </div>
             )}
 
