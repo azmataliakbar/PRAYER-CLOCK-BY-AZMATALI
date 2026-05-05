@@ -47,35 +47,32 @@ function HomeContent() {
       day: 'numeric',
     });
     setGregorianDate(date);
-    
-    // Also update Hijri date from browser when Gregorian date changes
-    updateHijriDateFromBrowser();
   }, [currentTime]);
 
-  // Function to get accurate Hijri date from browser
-  const updateHijriDateFromBrowser = () => {
+  // Function to get accurate Hijri date from API (works on all devices)
+  const updateHijriDateFromAPI = async () => {
     try {
-      // Use browser's built-in Islamic calendar
-      const islamicDate = new Date().toLocaleDateString('en-TN-u-ca-islamic', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
+      const today = new Date().toISOString().split('T')[0];
+      const response = await fetch(`https://api.aladhan.com/v1/gToH/${today}`);
+      const data = await response.json();
       
-      // Format: "17 Dhul Qadah 1447"
-      const parts = islamicDate.split(' ');
-      if (parts.length >= 3) {
-        const day = parts[0];
-        const month = parts[1];
-        const year = parts[2];
+      if (data?.data?.hijri) {
+        const hijri = data.data.hijri;
+        const day = hijri.day;
+        const month = hijri.month.ar;
+        const year = hijri.year;
         setHijriDate(`HIJRY ${day} ${month} ${year}`);
       } else {
-        setHijriDate(`HIJRY ${islamicDate}`);
+        throw new Error('API response invalid');
       }
     } catch (err) {
-      console.error('Failed to get Hijri date:', err);
-      // Fallback
-      setHijriDate('HIJRY Date unavailable');
+      console.error('Hijri API failed:', err);
+      // Fallback: Calculate approximate Hijri date
+      const d = new Date();
+      const hijriYear = d.getFullYear() - 622;
+      const hijriMonths = ['Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani', 'Jumada al-Ula', 'Jumada al-Thani', 'Rajab', 'Sha\'ban', 'Ramadan', 'Shawwal', 'Dhul Qadah', 'Dhul Hijjah'];
+      const monthIndex = (d.getMonth() + 6) % 12;
+      setHijriDate(`HIJRY ${d.getDate()} ${hijriMonths[monthIndex]} ${hijriYear}`);
     }
   };
 
@@ -86,15 +83,6 @@ function HomeContent() {
       const response = await fetch(`/api/prayers?city=Karachi&country=Pakistan&date=${today}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
-      
-      // Also update Hijri date from API as backup
-      if (data?.data?.date?.hijri) {
-        const hijri = data.data.date.hijri;
-        // Only use API if browser method fails, otherwise browser is more accurate
-        if (!hijriDate || hijriDate === '') {
-          setHijriDate(`HIJRY ${hijri.day} ${hijri.month.ar} ${hijri.year}`);
-        }
-      }
       
       // Calculate next prayer (handles next day Fajr)
       if (data?.data?.timings) {
@@ -152,10 +140,10 @@ function HomeContent() {
     }
   };
 
-  // Fetch prayer times on initial load
+  // Initial data load
   useEffect(() => {
     fetchPrayerData();
-    updateHijriDateFromBrowser();
+    updateHijriDateFromAPI();
   }, []);
 
   // Auto-sync: Refresh every hour AND check for date change
@@ -163,7 +151,7 @@ function HomeContent() {
     // Refresh every hour
     const interval = setInterval(() => {
       fetchPrayerData();
-      updateHijriDateFromBrowser();
+      updateHijriDateFromAPI();
     }, 60 * 60 * 1000); // Every hour
     
     // Check for date change every minute
@@ -172,7 +160,7 @@ function HomeContent() {
       if (currentDate !== lastDateRef.current) {
         lastDateRef.current = currentDate;
         fetchPrayerData(); // Refresh data when date changes
-        updateHijriDateFromBrowser(); // Update Hijri date
+        updateHijriDateFromAPI(); // Update Hijri date
       }
     }, 60000); // Check every minute
     
