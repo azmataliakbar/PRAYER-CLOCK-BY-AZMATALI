@@ -112,12 +112,12 @@ function HomeContent() {
             
             {/* Header - Date */}
             <div className="text-center relative">
-              <p className="text-gray-400 dark:text-amber-500 text-xs xs:text-sm sm:text-base font-medium">
+              <p className="text-gray-700 dark:text-amber-200 text-xs xs:text-sm sm:text-base font-medium">
                 {gregorianDate}
               </p>
               
               {/* Clock - 12 Hour Format with AM/PM */}
-              <h1 className="font-mono font-bold text-gray-800 dark:text-amber-500 my-2 xs:my-3 sm:my-4 leading-tight">
+              <h1 className="font-mono font-bold text-gray-800 dark:text-amber-100 my-2 xs:my-3 sm:my-4 leading-tight">
                 <span className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl break-words">
                   {formatTime12Hour(currentTime)}
                 </span>
@@ -125,7 +125,7 @@ function HomeContent() {
               
               {/* Hijri Date */}
               {hijriDate && (
-                <p className="text-emerald-700 dark:text-emerald-400 text-lg sm:text-md md:text-lg font-black font-arabic break-words">
+                <p className="text-emerald-700 dark:text-emerald-300 text-xs xs:text-sm sm:text-base md:text-lg font-arabic break-words">
                   {hijriDate}
                 </p>
               )}

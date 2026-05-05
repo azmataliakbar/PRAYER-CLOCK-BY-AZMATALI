@@ -107,19 +107,19 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
             key={prayer.name}
             className={`p-2 xs:p-3 sm:p-4 rounded-xl flex justify-between items-center transition-all duration-300 ${
               isNext 
-                ? 'bg-gradient-to-r from-amber-200 to-amber-100 dark:from-amber-500/50 dark:to-amber-400/50 border-2 border-amber-600 dark:border-amber-600 shadow-lg' 
+                ? 'bg-gradient-to-r from-amber-300 to-amber-200 dark:from-amber-800/50 dark:to-amber-700/50 border-2 border-amber-500 dark:border-amber-500 shadow-lg' 
                 : 'glass-card hover:scale-[1.01]'
             }`}
           >
             <div className="flex flex-col">
-              <span className={`text-sm xs:text-base sm:text-lg font-semibold ${isNext ? 'text-gray-800 dark:text-amber-800' : 'text-gray-800 dark:text-amber-400'}`}>
+              <span className={`text-sm xs:text-base sm:text-lg font-semibold ${isNext ? 'text-gray-800 dark:text-amber-200' : 'text-gray-800 dark:text-amber-100'}`}>
                 {prayer.name}
               </span>
-              <span className="text-base xs:text-lg sm:text-xl md:text-2xl font-arabic text-emerald-800 dark:text-emerald-400" style={{ fontFamily: "'Amiri', 'Noto Naskh Arabic', serif" }}>
+              <span className="text-base xs:text-lg sm:text-xl md:text-2xl font-arabic text-emerald-700 dark:text-emerald-300" style={{ fontFamily: "'Amiri', 'Noto Naskh Arabic', serif" }}>
                 {prayer.arabic}
               </span>
             </div>
-            <div className={`text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl font-mono font-bold ${isNext ? 'text-black dark:text-amber-800' : 'text-black dark:text-amber-400'}`}>
+            <div className={`text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl font-mono font-bold ${isNext ? 'text-gray-800 dark:text-amber-200' : 'text-gray-800 dark:text-amber-100'}`}>
               {displayTime12Hour}
             </div>
           </div>
