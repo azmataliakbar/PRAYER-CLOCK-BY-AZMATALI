@@ -95,7 +95,7 @@ function HomeContent() {
   };
 
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-slate-900 p-2 sm:p-3 md:p-4 relative">
+    <div className="min-h-screen p-2 sm:p-3 md:p-4 relative">
       {/* Corner Flowers Decorations */}
       <div className="corner-flower corner-flower-tl w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 hidden xs:block"></div>
       <div className="corner-flower corner-flower-tr w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 hidden xs:block"></div>
