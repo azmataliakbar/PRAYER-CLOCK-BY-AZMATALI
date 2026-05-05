@@ -113,7 +113,7 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
               <span className={`text-sm xs:text-base sm:text-lg font-semibold text-forced-dark`}>
                 {prayer.name}
               </span>
-              <span className="text-base xs:text-3xl sm:text-xl md:text-3xl font-arabic text-forced-green" style={{ fontFamily: "'Amiri', 'Noto Naskh Arabic', serif" }}>
+              <span className="text-base xs:text-3xl sm:text-xl md:text-3xl font-arabic text-forced-light text-green-400" style={{ fontFamily: "'Amiri', 'Noto Naskh Arabic', serif" }}>
                 {prayer.arabic}
               </span>
             </div>
