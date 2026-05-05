@@ -117,8 +117,8 @@ function HomeContent() {
               </p>
               
               {/* Clock - 12 Hour Format with AM/PM */}
-              <h1 className="font-mono font-bold text-gray-800 dark:text-amber-100 my-2 xs:my-3 sm:my-4 leading-tight">
-                <span className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl break-words">
+              <h1 className="my-2 xs:my-3 sm:my-4 leading-tight">
+                <span className="text-clock-digits break-words">
                   {formatTime12Hour(currentTime)}
                 </span>
               </h1>
