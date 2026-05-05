@@ -2,7 +2,7 @@
 
 import { useTheme } from '@/components/ThemeProvider';
 import PrayerTimes from '@/components/PrayerTimes';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -28,6 +28,9 @@ function HomeContent() {
   const [gregorianDate, setGregorianDate] = useState('');
   const [hijriDate, setHijriDate] = useState('');
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; remaining: string } | null>(null);
+  
+  // Ref to track last date to detect day change
+  const lastDateRef = useRef<number>(new Date().getDate());
 
   // Update clock every second
   useEffect(() => {
@@ -44,71 +47,139 @@ function HomeContent() {
       day: 'numeric',
     });
     setGregorianDate(date);
+    
+    // Also update Hijri date from browser when Gregorian date changes
+    updateHijriDateFromBrowser();
   }, [currentTime]);
 
-  // Fetch prayer times
-  useEffect(() => {
-    fetch('/api/prayers?city=Karachi&country=Pakistan')
-      .then(res => res.json())
-      .then(data => {
-        if (data?.data?.date?.hijri) {
-          const hijri = data.data.date.hijri;
+  // Function to get accurate Hijri date from browser
+  const updateHijriDateFromBrowser = () => {
+    try {
+      // Use browser's built-in Islamic calendar
+      const islamicDate = new Date().toLocaleDateString('en-TN-u-ca-islamic', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      
+      // Format: "17 Dhul Qadah 1447"
+      const parts = islamicDate.split(' ');
+      if (parts.length >= 3) {
+        const day = parts[0];
+        const month = parts[1];
+        const year = parts[2];
+        setHijriDate(`HIJRY ${day} ${month} ${year}`);
+      } else {
+        setHijriDate(`HIJRY ${islamicDate}`);
+      }
+    } catch (err) {
+      console.error('Failed to get Hijri date:', err);
+      // Fallback
+      setHijriDate('HIJRY Date unavailable');
+    }
+  };
+
+  // Function to fetch prayer times
+  const fetchPrayerData = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const response = await fetch(`/api/prayers?city=Karachi&country=Pakistan&date=${today}`);
+      if (!response.ok) throw new Error('Failed to fetch');
+      const data = await response.json();
+      
+      // Also update Hijri date from API as backup
+      if (data?.data?.date?.hijri) {
+        const hijri = data.data.date.hijri;
+        // Only use API if browser method fails, otherwise browser is more accurate
+        if (!hijriDate || hijriDate === '') {
           setHijriDate(`HIJRY ${hijri.day} ${hijri.month.ar} ${hijri.year}`);
         }
+      }
+      
+      // Calculate next prayer (handles next day Fajr)
+      if (data?.data?.timings) {
+        const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTimeMinutes = currentHour * 60 + currentMinute;
         
-        // Calculate next prayer (handles next day Fajr)
-        if (data?.data?.timings) {
-          const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-          const now = new Date();
-          const currentHour = now.getHours();
-          const currentMinute = now.getMinutes();
-          const currentTimeMinutes = currentHour * 60 + currentMinute;
+        let nextPrayerFound: string | null = null;
+        let nextPrayerTimeMinutes: number | null = null;
+        
+        for (const prayer of prayers) {
+          const prayerTimeStr = data.data.timings[prayer].split(' ')[0];
+          const [hour, minute] = prayerTimeStr.split(':').map(Number);
+          const prayerTimeMinutes = hour * 60 + minute;
           
-          let nextPrayerFound: string | null = null;
-          let nextPrayerTimeMinutes: number | null = null;
-          
-          for (const prayer of prayers) {
-            const prayerTimeStr = data.data.timings[prayer].split(' ')[0];
-            const [hour, minute] = prayerTimeStr.split(':').map(Number);
-            const prayerTimeMinutes = hour * 60 + minute;
-            
-            if (prayerTimeMinutes > currentTimeMinutes) {
-              nextPrayerFound = prayer;
-              nextPrayerTimeMinutes = prayerTimeMinutes;
-              break;
-            }
-          }
-          
-          // If no prayer found today (after Isha), show Fajr for tomorrow
-          if (!nextPrayerFound || !nextPrayerTimeMinutes) {
-            const fajrTimeStr = data.data.timings['Fajr'].split(' ')[0];
-            const [fajrHour, fajrMinute] = fajrTimeStr.split(':').map(Number);
-            const fajrTimeMinutes = fajrHour * 60 + fajrMinute;
-            const secondsInDay = 24 * 60;
-            let diffMin = (fajrTimeMinutes + secondsInDay) - currentTimeMinutes;
-            const hours = Math.floor(diffMin / 60);
-            const minutes = diffMin % 60;
-            
-            setNextPrayer({
-              name: 'Fajr (Next Day)',
-              time: fajrTimeStr,
-              remaining: `${hours > 0 ? `${hours}h ` : ''}${minutes}m`
-            });
-          } else {
-            // Calculate remaining time for today's next prayer
-            const diffMin = nextPrayerTimeMinutes - currentTimeMinutes;
-            const hours = Math.floor(diffMin / 60);
-            const minutes = diffMin % 60;
-            const prayerTimeStr = data.data.timings[nextPrayerFound].split(' ')[0];
-            setNextPrayer({
-              name: nextPrayerFound,
-              time: prayerTimeStr,
-              remaining: `${hours > 0 ? `${hours}h ` : ''}${minutes}m`
-            });
+          if (prayerTimeMinutes > currentTimeMinutes) {
+            nextPrayerFound = prayer;
+            nextPrayerTimeMinutes = prayerTimeMinutes;
+            break;
           }
         }
-      })
-      .catch(console.error);
+        
+        // If no prayer found today (after Isha), show Fajr for tomorrow
+        if (!nextPrayerFound || !nextPrayerTimeMinutes) {
+          const fajrTimeStr = data.data.timings['Fajr'].split(' ')[0];
+          const [fajrHour, fajrMinute] = fajrTimeStr.split(':').map(Number);
+          const fajrTimeMinutes = fajrHour * 60 + fajrMinute;
+          const secondsInDay = 24 * 60;
+          let diffMin = (fajrTimeMinutes + secondsInDay) - currentTimeMinutes;
+          const hours = Math.floor(diffMin / 60);
+          const minutes = diffMin % 60;
+          
+          setNextPrayer({
+            name: 'Fajr (Next Day)',
+            time: fajrTimeStr,
+            remaining: `${hours > 0 ? `${hours}h ` : ''}${minutes}m`
+          });
+        } else {
+          // Calculate remaining time for today's next prayer
+          const diffMin = nextPrayerTimeMinutes - currentTimeMinutes;
+          const hours = Math.floor(diffMin / 60);
+          const minutes = diffMin % 60;
+          const prayerTimeStr = data.data.timings[nextPrayerFound].split(' ')[0];
+          setNextPrayer({
+            name: nextPrayerFound,
+            time: prayerTimeStr,
+            remaining: `${hours > 0 ? `${hours}h ` : ''}${minutes}m`
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch prayer times:', err);
+    }
+  };
+
+  // Fetch prayer times on initial load
+  useEffect(() => {
+    fetchPrayerData();
+    updateHijriDateFromBrowser();
+  }, []);
+
+  // Auto-sync: Refresh every hour AND check for date change
+  useEffect(() => {
+    // Refresh every hour
+    const interval = setInterval(() => {
+      fetchPrayerData();
+      updateHijriDateFromBrowser();
+    }, 60 * 60 * 1000); // Every hour
+    
+    // Check for date change every minute
+    const dateCheckInterval = setInterval(() => {
+      const currentDate = new Date().getDate();
+      if (currentDate !== lastDateRef.current) {
+        lastDateRef.current = currentDate;
+        fetchPrayerData(); // Refresh data when date changes
+        updateHijriDateFromBrowser(); // Update Hijri date
+      }
+    }, 60000); // Check every minute
+    
+    return () => {
+      clearInterval(interval);
+      clearInterval(dateCheckInterval);
+    };
   }, []);
 
   // Format time to 12-hour with AM/PM
@@ -161,9 +232,9 @@ function HomeContent() {
             {/* Next Prayer Banner */}
             {nextPrayer && (
               <div className="bg-gradient-to-r from-amber-200 to-orange-200 dark:from-amber-900/50 dark:to-orange-900/50 rounded-xl p-2 xs:p-3 sm:p-4 text-center animate-pulse-subtle">
-                <p className="text-large text-forced-light font-bold text-green-800 dark:text-green-700">Next Prayer</p>
-                <p className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-forced-light text-green-800 dark:text-green-700">{nextPrayer.name}</p>
-                <p className="text-large xs:text-sm text-forced-light font-bold text-green-800 dark:text-green-700">in {nextPrayer.remaining}</p>
+                <p className="text-large text-green-800 dark:text-green-200 font-bold">Next Prayer</p>
+                <p className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-green-800 dark:text-green-200">{nextPrayer.name}</p>
+                <p className="text-large xs:text-sm text-green-800 dark:text-green-200 font-bold">in {nextPrayer.remaining}</p>
               </div>
             )}
 
@@ -173,12 +244,12 @@ function HomeContent() {
             {/* Footer */}
             <div className="mt-3 xs:mt-4 sm:mt-6 text-center space-y-2 xs:space-y-3 sm:space-y-4">
               <button
-              onClick={toggleTheme}
-              className="px-3 xs:px-4 sm:px-6 py-1.5 xs:py-2 bg-amber-200 dark:bg-slate-700 rounded-xl shadow-md hover:scale-105 transition-all duration-300 font-bold text-sm xs:text-base"
-              style={{ color: '#000000' }}
-            >
-              {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-            </button>
+                onClick={toggleTheme}
+                className="px-3 xs:px-4 sm:px-6 py-1.5 xs:py-2 bg-amber-200 dark:bg-slate-700 rounded-xl shadow-md hover:scale-105 transition-all duration-300 font-bold text-sm xs:text-base"
+                style={{ color: '#000000' }}
+              >
+                {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+              </button>
               <p className="text-[10px] xs:text-xs text-forced-dark border-t border-amber-200 dark:border-slate-700 pt-2 xs:pt-3">
                 Designed By: Azmat Ali
               </p>
