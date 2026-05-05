@@ -1,0 +1,9 @@
+{
+  "name": "Prayer Times Karachi",
+  "short_name": "PrayerTimes",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "description": "Islamic prayer times for Karachi, Pakistan"
+}
