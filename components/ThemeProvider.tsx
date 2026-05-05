@@ -34,29 +34,26 @@ export default function ThemeProvider({
     
     if (savedTheme) {
       setTheme(savedTheme);
-      if (savedTheme === 'dark') {
+    } else if (prefersDark) {
+      setTheme('dark');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('theme', theme);
+      if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-    } else if (prefersDark) {
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
     }
-  }, []);
+  }, [theme, mounted]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  // Don't render anything until mounted to avoid hydration mismatch
   if (!mounted) {
     return <>{children}</>;
   }

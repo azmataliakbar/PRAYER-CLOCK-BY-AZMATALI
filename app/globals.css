@@ -1,107 +1,122 @@
 @import "tailwindcss";
 
-@layer base {
-  /* Light mode - consistent across all devices */
-  :root {
-    --background: 212 95% 68%;  /*#d4a574 */
-    --foreground: 0 0% 0%;  /* Black text */
-  }
-
-  /* Dark mode */
-  .dark {
-    --background: 222 47% 11%;  /* #1a1a2e */
-    --foreground: 0 0% 100%;  /* White text */
-  }
-
-  body {
-    background-color: #d4a574 !important;
-    color: #1a1a2e !important;
-  }
-
-  .dark body {
-    background-color: #1a1a2e !important;
-    color: #fef3c7 !important;
-  }
+/* LIGHT MODE - Force these colors on ALL devices */
+:root {
+  --bg-main: #d4a574;
+  --text-black: #000000;
+  --text-dark: #1a1a2e;
+  --card-bg: #fdf8f0;
+  --arabic-green: #065f46;
+  --highlight-bg: #fed7aa;
+  --highlight-border: #f59e0b;
 }
 
-@layer components {
-  .oil-painting-frame {
-    background: linear-gradient(135deg, #f5e6ca 0%, #d4a574 25%, #c8956c 50%, #d4a574 75%, #f5e6ca 100%);
-    padding: 6px;
-    border-radius: 32px;
-    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.5);
-  }
-
-  .oil-painting-frame-inner {
-    background: linear-gradient(135deg, #c8956c 0%, #b8845c 100%);
-    border-radius: 26px;
-    padding: 3px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.7);
-  }
-
-  .dark .oil-painting-frame-inner {
-    background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
-  }
-
-  .glass-card {
-    background-color: #fdf8f0 !important;
-    border-radius: 1rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-    border: 1px solid #e8d5b5;
-  }
-  
-  .dark .glass-card {
-    background-color: #1e293b !important;
-    border: 1px solid #334155;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-  }
-
-  .text-shadow-gold {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), 0 0 8px rgba(239, 216, 158, 0.3);
-  }
-
-  .text-shadow-dark {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  }
+/* DARK MODE */
+.dark {
+  --bg-main: #1a1a2e;
+  --text-black: #ffffff;
+  --text-dark: #fef3c7;
+  --card-bg: #1e293b;
+  --arabic-green: #34d399;
+  --highlight-bg: #78350f;
+  --highlight-border: #f59e0b;
 }
 
-@layer utilities {
-  .corner-flower {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    pointer-events: none;
-    background-size: contain;
-    background-repeat: no-repeat;
-    opacity: 0.5;
-  }
+/* GLOBAL FORCED STYLES - Same on all devices */
+body {
+  background-color: var(--bg-main) !important;
+  margin: 0;
+  padding: 0;
+}
 
-  .corner-flower-tl {
-    top: 0;
-    left: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
-  }
+/* Force ALL text colors */
+.text-forced-black {
+  color: var(--text-black) !important;
+}
 
-  .corner-flower-tr {
-    top: 0;
-    right: 0;
-    transform: rotate(90deg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
-  }
+.text-forced-dark {
+  color: var(--text-dark) !important;
+}
 
-  .corner-flower-bl {
-    bottom: 0;
-    left: 0;
-    transform: rotate(-90deg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
-  }
+.text-forced-green {
+  color: var(--arabic-green) !important;
+}
 
-  .corner-flower-br {
-    bottom: 0;
-    right: 0;
-    transform: rotate(180deg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
-  }
+/* Glass card forced */
+.glass-card-forced {
+  background-color: var(--card-bg) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Highlight next prayer */
+.highlight-prayer {
+  background: linear-gradient(135deg, #fed7aa, #fde68a) !important;
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+}
+
+.dark .highlight-prayer {
+  background: linear-gradient(135deg, #78350f, #92400e) !important;
+  border: 2px solid #f59e0b !important;
+}
+
+/* Oil painting frame */
+.oil-painting-frame {
+  background: linear-gradient(135deg, #f5e6ca 0%, #d4a574 25%, #c8956c 50%, #d4a574 75%, #f5e6ca 100%);
+  padding: 6px;
+  border-radius: 32px;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.oil-painting-frame-inner {
+  background: linear-gradient(135deg, #c8956c 0%, #b8845c 100%);
+  border-radius: 26px;
+  padding: 3px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.dark .oil-painting-frame-inner {
+  background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+}
+
+/* Corner flowers */
+.corner-flower {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+}
+
+.corner-flower-tl {
+  top: 0;
+  left: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
+}
+
+.corner-flower-tr {
+  top: 0;
+  right: 0;
+  transform: rotate(90deg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
+}
+
+.corner-flower-bl {
+  bottom: 0;
+  left: 0;
+  transform: rotate(-90deg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
+}
+
+.corner-flower-br {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23d4a574' stroke='%238b5a2b' stroke-width='1' d='M50,10 Q60,30 80,30 Q65,45 75,65 Q55,55 50,75 Q45,55 25,65 Q35,45 20,30 Q40,30 50,10Z'/%3E%3Ccircle cx='50' cy='40' r='8' fill='%23ffd700'/%3E%3C/svg%3E");
 }
 
 @keyframes pulse-subtle {
