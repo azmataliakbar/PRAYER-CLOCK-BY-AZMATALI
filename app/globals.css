@@ -149,7 +149,7 @@ body {
 
 /* Light mode date text - Dark color for visibility */
 .text-date-large {
-  color: #56f3aa !important;
+  color: #04d976 !important;
 }
 
 /* Dark mode date text - Light/Amber for visibility */
@@ -185,7 +185,7 @@ body {
 
 /* Light mode - Rich Emerald */
 .text-hijri-large {
-  color: #56f3aa !important;  /* Vibrant emerald */
+  color: #04d976 !important;
 }
 
 /* Dark mode - Bright Emerald with glow */
