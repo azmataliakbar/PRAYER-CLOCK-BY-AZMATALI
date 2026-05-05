@@ -173,11 +173,12 @@ function HomeContent() {
             {/* Footer */}
             <div className="mt-3 xs:mt-4 sm:mt-6 text-center space-y-2 xs:space-y-3 sm:space-y-4">
               <button
-                onClick={toggleTheme}
-                className="px-3 xs:px-4 sm:px-6 py-1.5 xs:py-2 bg-amber-200 dark:bg-slate-700 rounded-xl shadow-md text-forced-dark hover:scale-105 transition-all duration-300 font-medium text-sm xs:text-base"
-              >
-                {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-              </button>
+              onClick={toggleTheme}
+              className="px-3 xs:px-4 sm:px-6 py-1.5 xs:py-2 bg-amber-200 dark:bg-slate-700 rounded-xl shadow-md hover:scale-105 transition-all duration-300 font-bold text-sm xs:text-base"
+              style={{ color: '#000000' }}
+            >
+              {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+            </button>
               <p className="text-[10px] xs:text-xs text-forced-dark border-t border-amber-200 dark:border-slate-700 pt-2 xs:pt-3">
                 Designed By: Azmat Ali
               </p>
