@@ -162,3 +162,34 @@ body {
 .dark .text-date-large {
   color: #ffd700 !important;  /* Gold - very bright */
 }
+
+/* Extra Large Hijri Text */
+.text-hijri-large {
+  font-size: 1rem !important;     /* 16px base - larger */
+  font-weight: 800 !important;    /* Extra bold */
+  letter-spacing: 0.03em !important;
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif !important;
+}
+
+@media (min-width: 640px) {
+  .text-hijri-large {
+    font-size: 1.125rem !important; /* 18px */
+  }
+}
+
+@media (min-width: 768px) {
+  .text-hijri-large {
+    font-size: 1.25rem !important;  /* 20px */
+  }
+}
+
+/* Light mode - Rich Emerald */
+.text-hijri-large {
+  color: #047857 !important;  /* Vibrant emerald */
+}
+
+/* Dark mode - Bright Emerald with glow */
+.dark .text-hijri-large {
+  color: #a7f3d0 !important;  /* Very light emerald */
+  text-shadow: 0 0 4px rgba(0,0,0,0.4) !important;
+}

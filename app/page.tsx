@@ -125,7 +125,7 @@ function HomeContent() {
               
               {/* Hijri Date */}
               {hijriDate && (
-                <p className="text-emerald-800 dark:text-emerald-200 text-xs xs:text-sm sm:text-base md:text-lg font-arabic break-words">
+                <p className="text-hijri-large break-words">
                   {hijriDate}
                 </p>
               )}
