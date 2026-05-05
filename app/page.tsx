@@ -2,7 +2,7 @@
 
 import { useTheme } from '@/components/ThemeProvider';
 import PrayerTimes from '@/components/PrayerTimes';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -29,8 +29,7 @@ function HomeContent() {
   const [hijriDate, setHijriDate] = useState('');
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; remaining: string } | null>(null);
   
-  // Ref to track last date to detect day change
-  const lastDateRef = useRef<number>(new Date().getDate());
+  const lastDateRef = useRef<string>('');
 
   // Update clock every second
   useEffect(() => {
@@ -38,31 +37,38 @@ function HomeContent() {
     return () => clearInterval(timer);
   }, []);
 
-  // Update gregorian date when time changes
+  // Update gregorian date when time changes (Pakistan time zone)
   useEffect(() => {
     const date = currentTime.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      timeZone: 'Asia/Karachi'
     });
     setGregorianDate(date);
   }, [currentTime]);
 
-  // Function to fetch prayer times and Hijri date
-  const fetchPrayerData = async () => {
+  // Fetch prayer times and Hijri date
+  const fetchPrayerData = useCallback(async () => {
     try {
-      const response = await fetch('/api/prayers?city=Karachi&country=Pakistan');
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/prayers?city=Karachi&country=Pakistan&_=${timestamp}`, {
+        cache: 'no-store',
+      });
+      
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       
-      // Update Hijri date
+      // Update Hijri date (as-is from API)
       if (data?.data?.date?.hijri) {
         const hijri = data.data.date.hijri;
-        setHijriDate(`HIJRY ${hijri.day} ${hijri.month.ar} ${hijri.year}`);
+        const formattedHijri = `HIJRY ${hijri.day} ${hijri.month.ar} ${hijri.year}`;
+        console.log('Hijri date from API:', formattedHijri);
+        setHijriDate(formattedHijri);
       }
       
-      // Calculate next prayer (handles next day Fajr)
+      // Calculate next prayer
       if (data?.data?.timings) {
         const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
         const now = new Date();
@@ -85,7 +91,6 @@ function HomeContent() {
           }
         }
         
-        // If no prayer found today (after Isha), show Fajr for tomorrow
         if (!nextPrayerFound || !nextPrayerTimeMinutes) {
           const fajrTimeStr = data.data.timings['Fajr'].split(' ')[0];
           const [fajrHour, fajrMinute] = fajrTimeStr.split(':').map(Number);
@@ -101,7 +106,6 @@ function HomeContent() {
             remaining: `${hours > 0 ? `${hours}h ` : ''}${minutes}m`
           });
         } else {
-          // Calculate remaining time for today's next prayer
           const diffMin = nextPrayerTimeMinutes - currentTimeMinutes;
           const hours = Math.floor(diffMin / 60);
           const minutes = diffMin % 60;
@@ -116,42 +120,41 @@ function HomeContent() {
     } catch (err) {
       console.error('Failed to fetch prayer times:', err);
     }
-  };
+  }, []);
 
   // Fetch prayer times on initial load
   useEffect(() => {
     fetchPrayerData();
-  }, []);
+  }, [fetchPrayerData]);
 
-  // Auto-sync Hijri date: Refresh every hour AND check for date change
+  // Refresh data every hour and check for date change
   useEffect(() => {
-    // Refresh every hour
     const interval = setInterval(() => {
       fetchPrayerData();
-    }, 60 * 60 * 1000); // Every hour
+    }, 60 * 60 * 1000);
     
-    // Check for date change every minute
     const dateCheckInterval = setInterval(() => {
       const currentDate = new Date().getDate();
-      if (currentDate !== lastDateRef.current) {
-        lastDateRef.current = currentDate;
-        fetchPrayerData(); // Refresh data when date changes
+      if (currentDate !== parseInt(lastDateRef.current)) {
+        lastDateRef.current = currentDate.toString();
+        fetchPrayerData();
       }
-    }, 60000); // Check every minute
+    }, 60000);
     
     return () => {
       clearInterval(interval);
       clearInterval(dateCheckInterval);
     };
-  }, []);
+  }, [fetchPrayerData]);
 
-  // Format time to 12-hour with AM/PM
+  // Format time to 12-hour with AM/PM (Pakistan time)
   const formatTime12Hour = (date: Date) => {
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
       minute: '2-digit', 
       second: '2-digit',
-      hour12: true 
+      hour12: true,
+      timeZone: 'Asia/Karachi'
     });
   };
 
@@ -203,6 +206,16 @@ function HomeContent() {
 
             {/* Prayer Times List */}
             <PrayerTimes />
+
+            {/* 📌 INFORMATIVE NOTE - Visible but not intrusive */}
+            <div className="mt-2 text-center px-2">
+              <div className="bg-amber-50/50 dark:bg-amber-900/20 rounded-lg p-2 border border-amber-200/50 dark:border-amber-800/30">
+                <p className="text-[10px] xs:text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                  📅 <span className="font-semibold">Note:</span> Hijri dates may vary by ±1 day depending on moon sighting and regional differences 
+                  (Umm Al-Qura vs. local moon sighting in Pakistan).
+                </p>
+              </div>
+            </div>
 
             {/* Footer */}
             <div className="mt-3 xs:mt-4 sm:mt-6 text-center space-y-2 xs:space-y-3 sm:space-y-4">
