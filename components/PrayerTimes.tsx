@@ -26,7 +26,6 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
   const convertTo12Hour = (time24: string): string => {
     if (!time24) return '--:--';
     
-    // Handle time format like "17:06" or "17:06 (UTC)"
     const timePart = time24.split(' ')[0];
     const [hourStr, minuteStr] = timePart.split(':');
     let hour = parseInt(hourStr, 10);
@@ -34,7 +33,7 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
     
     const ampm = hour >= 12 ? 'PM' : 'AM';
     hour = hour % 12;
-    hour = hour === 0 ? 12 : hour; // Convert 0 to 12 for midnight
+    hour = hour === 0 ? 12 : hour;
     
     return `${hour}:${minute} ${ampm}`;
   };
@@ -52,21 +51,30 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
       const data = await response.json();
       setPrayerData(data);
       
-      // Determine next prayer
+      // Determine next prayer (handles next day Fajr)
       const now = new Date();
       const currentHour = now.getHours();
       const currentMinute = now.getMinutes();
-      const currentTime = currentHour * 60 + currentMinute;
+      const currentTimeMinutes = currentHour * 60 + currentMinute;
+      
+      let foundNextPrayer: string | null = null;
       
       for (const prayer of prayers) {
         const timeStr = data.data.timings[prayer.name].split(' ')[0];
         const [hour, minute] = timeStr.split(':').map(Number);
-        const prayerTime = hour * 60 + minute;
+        const prayerTimeMinutes = hour * 60 + minute;
         
-        if (prayerTime > currentTime) {
-          setNextPrayerName(prayer.name);
+        if (prayerTimeMinutes > currentTimeMinutes) {
+          foundNextPrayer = prayer.name;
           break;
         }
+      }
+      
+      // If no prayer found today, show Fajr as next (for tomorrow)
+      if (foundNextPrayer) {
+        setNextPrayerName(foundNextPrayer);
+      } else {
+        setNextPrayerName('Fajr');
       }
     } catch (err) {
       setError('Unable to load prayer times');
@@ -79,7 +87,7 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
   if (loading) {
     return (
       <div className="flex justify-center items-center py-10 sm:py-20">
-        <div className="animate-pulse text-gray-700 dark:text-amber-400">Loading prayer times...</div>
+        <div className="animate-pulse text-forced-dark">Loading prayer times...</div>
       </div>
     );
   }
@@ -110,14 +118,14 @@ export default function PrayerTimes({ city = 'Karachi', country = 'Pakistan' }: 
             }`}
           >
             <div className="flex flex-col">
-              <span className={`text-sm xs:text-base sm:text-lg font-semibold text-forced-dark`}>
+              <span className="text-sm xs:text-base sm:text-lg font-semibold text-forced-dark">
                 {prayer.name}
               </span>
-              <span className="text-base xs:text-3xl sm:text-xl md:text-3xl font-arabic text-forced-light text-green-500" style={{ fontFamily: "'Amiri', 'Noto Naskh Arabic', serif" }}>
+              <span className="text-base xs:text-3xl sm:text-xl md:text-3xl font-arabic text-forced-green" style={{ fontFamily: "'Amiri', 'Noto Naskh Arabic', serif" }}>
                 {prayer.arabic}
               </span>
             </div>
-            <div className={`text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl font-mono font-bold text-forced-black`}>
+            <div className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl font-mono font-bold text-forced-black">
               {displayTime12Hour}
             </div>
           </div>
