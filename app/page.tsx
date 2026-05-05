@@ -112,7 +112,7 @@ function HomeContent() {
             
             {/* Header - Date */}
             <div className="text-center relative">
-              <p className="text-gray-700 dark:text-amber-200 text-xs xs:text-sm sm:text-base font-medium">
+              <p className="text-date-large">
                 {gregorianDate}
               </p>
               
@@ -125,7 +125,7 @@ function HomeContent() {
               
               {/* Hijri Date */}
               {hijriDate && (
-                <p className="text-emerald-700 dark:text-emerald-300 text-xs xs:text-sm sm:text-base md:text-lg font-arabic break-words">
+                <p className="text-emerald-800 dark:text-emerald-200 text-xs xs:text-sm sm:text-base md:text-lg font-arabic break-words">
                   {hijriDate}
                 </p>
               )}

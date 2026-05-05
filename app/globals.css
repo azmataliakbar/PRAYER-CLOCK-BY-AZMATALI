@@ -127,3 +127,38 @@ body {
 .animate-pulse-subtle {
   animation: pulse-subtle 2s ease-in-out infinite;
 }
+
+/* Enhanced Text Classes for Better Visibility */
+.text-date-large {
+  font-size: 0.875rem !important;  /* 14px base */
+  font-weight: 700 !important;     /* Bold */
+  letter-spacing: 0.02em !important;
+}
+
+@media (min-width: 640px) {
+  .text-date-large {
+    font-size: 1rem !important;    /* 16px on tablet */
+  }
+}
+
+@media (min-width: 768px) {
+  .text-date-large {
+    font-size: 1.125rem !important; /* 18px on desktop */
+  }
+}
+
+/* Light mode date text - Dark color for visibility */
+.text-date-large {
+  color: #1a1a2e !important;
+}
+
+/* Dark mode date text - Light/Amber for visibility */
+.dark .text-date-large {
+  color: #fde68a !important;  /* Light amber - very visible on dark */
+  text-shadow: 0 0 2px rgba(0,0,0,0.3) !important;
+}
+
+/* Alternative: If you want even brighter for dark mode */
+.dark .text-date-large {
+  color: #ffd700 !important;  /* Gold - very bright */
+}
