@@ -134,9 +134,9 @@ function HomeContent() {
             {/* Next Prayer Banner */}
             {nextPrayer && (
               <div className="bg-gradient-to-r from-amber-200 to-orange-200 dark:from-amber-900/50 dark:to-orange-900/50 rounded-xl p-2 xs:p-3 sm:p-4 text-center animate-pulse-subtle">
-                <p className="text-xs text-forced-dark font-semibold">Next Prayer</p>
-                <p className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-gray-800 dark:text-amber-200">{nextPrayer.name}</p>
-                <p className="text-xs xs:text-sm text-gray-700 dark:text-amber-300 font-medium">in {nextPrayer.remaining}</p>
+                <p className="text-large text-forced-light dark:text-yellow-50 font-bold">Next Prayer</p>
+                <p className="text-base xs:text-lg sm:text-xl md:text-2xl font-bold text-gray-500 dark:text-amber-300">{nextPrayer.name}</p>
+                <p className="text-small xs:text-sm text-gray-500 dark:text-amber-50 font-medium">in {nextPrayer.remaining}</p>
               </div>
             )}
 
@@ -151,7 +151,7 @@ function HomeContent() {
               >
                 {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
               </button>
-              <p className="text-[10px] xs:text-xs text-gray-600 dark:text-gray-400 border-t border-amber-200 dark:border-slate-700 pt-2 xs:pt-3">
+              <p className="text-[10px] xs:text-xs text-gray-100 dark:text-gray-100 border-t border-amber-200 dark:border-slate-700 pt-2 xs:pt-3">
                 Designed By: Azmat Ali
               </p>
             </div>
