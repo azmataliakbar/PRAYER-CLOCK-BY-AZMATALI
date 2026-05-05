@@ -210,7 +210,7 @@ function HomeContent() {
             {/* 📌 INFORMATIVE NOTE - Visible but not intrusive */}
             <div className="mt-2 text-center px-2">
               <div className="bg-amber-50/50 dark:bg-amber-900/20 rounded-lg p-2 border border-amber-200/50 dark:border-amber-800/30">
-                <p className="text-[10px] xs:text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed">
+                <p className="text-[10px] xs:text-[11px] text-red-700 dark:text-red-600 leading-relaxed bg-white dark:bg-white rounded-lg p-2 border border-red-300 dark:border-red-400 font-medium">
                   📅 <span className="font-semibold">Note:</span> Hijri dates may vary by ±1 day depending on moon sighting and regional differences 
                   (Umm Al-Qura vs. local moon sighting in Pakistan).
                 </p>
