@@ -63,7 +63,7 @@ function HomeContent() {
       // Update Hijri date (as-is from API)
       if (data?.data?.date?.hijri) {
         const hijri = data.data.date.hijri;
-        const formattedHijri = `HIJRY ${hijri.day} ${hijri.month.ar} ${hijri.year}`;
+        const formattedHijri = `HIJRI ${hijri.day} ${hijri.month.ar} ${hijri.year}`;
         console.log('Hijri date from API:', formattedHijri);
         setHijriDate(formattedHijri);
       }
